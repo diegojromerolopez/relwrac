@@ -2,16 +2,12 @@ import argparse
 import asyncio
 import logging
 import os
-import sys
-import urllib
-import urllib.parse
 
 import validators
 
 from crawler.crawler import Crawler
 from crawler.delay import Delay
 from crawler.stop_condition import StopCondition
-from crawler.timeout import Timeout
 from crawler.user_agent import UserAgent
 
 
@@ -28,7 +24,8 @@ def make_logger():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-u", "--url", help="Start URL that will be the first step of crawling", type=str)
+    parser.add_argument("-u", "--url", help="Start URL that will be the first step of crawling", type=str,
+                        required=True)
     parser.add_argument("-d", "--max_depth", help="Max depth of crawling", type=int, default=2, required=False)
     parser.add_argument("-ua", "--user_agent", help="Max depth of crawling", type=str, required=False)
     parser.add_argument("-op", "--pickle_path",
