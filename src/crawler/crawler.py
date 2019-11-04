@@ -11,12 +11,15 @@ import validators
 from bs4 import BeautifulSoup
 import csv
 
+from crawler.url_filter import UrlFilter
+
 
 class Crawler(object):
     def __init__(self,
                  start_url: str,
                  stop_condition: Callable[[int, Dict[str, Set[str]]], bool],
                  logger: logging.Logger,
+                 url_filters: Optional[List[UrlFilter]] = None,
                  delay: Union[int, Callable[[], int]] = 0,
                  proxies: Union[str, List, Callable] = None,
                  user_agent: Union[str, List, Callable] = None,
@@ -25,6 +28,7 @@ class Crawler(object):
         self.start_url = start_url
         self.stop_condition = stop_condition
         self.logger = logger
+        self.url_filters = url_filters
 
         self.delay = delay
         self.proxies = proxies
@@ -81,7 +85,7 @@ class Crawler(object):
             for html_a in soup.find_all('a'):
                 page_link = html_a.get('href')
                 page_url = urllib.parse.urljoin(url, page_link)
-                if validators.url(page_url):
+                if self.__url_must_be_crawled(page_url):
                     page_links.add(page_url)
             return page_links
 
@@ -133,3 +137,16 @@ class Crawler(object):
             return aiohttp.ClientTimeout(total=self.timeout())
 
         return aiohttp.helpers.sentinel
+
+    def __url_must_be_crawled(self, url) -> bool:
+        if not validators.url(url):
+            return False
+
+        if not self.url_filters:
+            return True
+
+        for url_filter in self.url_filters:
+            if url_filter.match(url):
+                return True
+
+        return False

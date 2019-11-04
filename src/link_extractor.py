@@ -2,12 +2,15 @@ import argparse
 import asyncio
 import logging
 import os
+import re
+from typing import Optional
 
 import validators
 
 from crawler.crawler import Crawler
 from crawler.delay import Delay
 from crawler.stop_condition import StopCondition
+from crawler.url_filter import UrlFilter
 from crawler.user_agent import UserAgent
 
 
@@ -27,6 +30,8 @@ def main():
     parser.add_argument("-u", "--url", help="Start URL that will be the first step of crawling", type=str,
                         required=True)
     parser.add_argument("-d", "--max_depth", help="Max depth of crawling", type=int, default=2, required=False)
+    parser.add_argument("-ureg", "--url_regex", help="URL regex of the URLs you want to crawl", type=str,
+                        default=None, required=False)
     parser.add_argument("-ua", "--user_agent", help="Max depth of crawling", type=str, required=False)
     parser.add_argument("-op", "--pickle_path",
                         help="The path of a pickle object that stores a dict where each key is an URL and the values"
@@ -42,6 +47,13 @@ def main():
     if args.max_depth < 1:
         raise ValueError(f"Max depth argument must be greater or equal than 1. It is {args.max_depth} instead")
 
+    url_filter: Optional[UrlFilter] = None
+    if args.url_regex:
+        try:
+            url_filter = UrlFilter(args.url_regex)
+        except re.error:
+            raise ValueError(f"URL regex argument is not a valid regex. It is {args.url_regex} instead")
+
     if not args.pickle_path and not args.csv_path:
         raise ValueError(f"An output file path (pickle or CSV) is required.")
 
@@ -52,6 +64,7 @@ def main():
     crawler = Crawler(
         start_url=args.url,
         stop_condition=StopCondition.depth_is_reached(args.max_depth),
+        url_filters=[url_filter],
         user_agent=UserAgent.none(),
         timeout=None,
         logger=logger,
