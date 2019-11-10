@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import pickle
 import random
 import urllib
 import urllib.parse
@@ -9,15 +8,15 @@ from typing import Set, Union, List, Callable, Dict, Optional
 import aiohttp
 import validators
 from bs4 import BeautifulSoup
-import csv
 
+from crawler.crawl import Crawl
 from crawler.url_filter import UrlFilter
 
 
 class Crawler(object):
     def __init__(self,
                  start_url: str,
-                 stop_condition: Callable[[int, Dict[str, Set[str]]], bool],
+                 stop_condition: Callable[[int, Crawl], bool],
                  logger: logging.Logger,
                  url_filters: Optional[List[UrlFilter]] = None,
                  delay: Union[int, Callable[[], int]] = 0,
@@ -35,23 +34,13 @@ class Crawler(object):
         self.user_agent = user_agent
         self.timeout = timeout
 
-        self.link_adj: Dict[str, Set[str]] = dict()
+    async def crawl(self) -> Crawl:
+        current_crawl: Crawl = Crawl(crawler=self)
+        await self.__crawl(current_crawl, [self.start_url], 0)
+        return current_crawl
 
-    async def crawl(self):
-        return await self.__crawl([self.start_url], 0)
-
-    def csv_link_adj(self, file_path):
-        with open(file_path, 'w') as csv_file:
-            csv_writer = csv.writer(csv_file, dialect='excel', quotechar='"', quoting=csv.QUOTE_ALL)
-            for page_url, page_links in self.link_adj.items():
-                csv_writer.writerow([page_url] + list(page_links))
-
-    def save_link_adj(self, file_path):
-        with open(file_path, 'wb') as pickle_file:
-            pickle.dump(self.link_adj, pickle_file)
-
-    async def __crawl(self, urls: List[str], depth):
-        if self.stop_condition(depth, self.link_adj):
+    async def __crawl(self, current_crawl: Crawl, urls: List[str], depth):
+        if self.stop_condition(depth, current_crawl):
             return
 
         page_links = await asyncio.gather(*(self.__page_links(url) for url in urls))
@@ -59,14 +48,12 @@ class Crawler(object):
         unvisited_urls = set()
         for url_index, links_found in enumerate(page_links):
             url_i = urls[url_index]
-            if url_i not in self.link_adj:
-                self.link_adj[url_i] = set()
-            self.link_adj[url_i] |= links_found
+            current_crawl.add_url_links(url_i, links_found)
             unvisited_urls |= links_found
 
-        unvisited_urls -= set(self.link_adj.keys())
+        unvisited_urls -= set(current_crawl.visited_urls)
 
-        return await self.__crawl(urls=list(unvisited_urls), depth=depth + 1)
+        return await self.__crawl(current_crawl=current_crawl, urls=list(unvisited_urls), depth=depth + 1)
 
     async def __page_links(self, url: str) -> Set[str]:
         await self.__sleep()

@@ -5,6 +5,18 @@ and [asyncio](https://docs.python.org/3/library/asyncio.html).
 
 **WARNING: this project is in alpha stage and you should not be using it in production.**
 
+## Installation
+
+### System requirements
+
+```bash
+$ sudo apt install libcairo2 libxml2-dev
+```
+
+### Virtualenv requirements
+
+Install packages specified by [requirements.txt](/requirements.txt).
+
 ## Crawler
 
 [link_extractor.py](/src/link_extractor.py) is a Python program that allows to extract

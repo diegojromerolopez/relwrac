@@ -7,11 +7,14 @@ from typing import Optional
 
 import validators
 
+from crawler.crawl import Crawl
 from crawler.crawler import Crawler
 from crawler.delay import Delay
 from crawler.stop_condition import StopCondition
 from crawler.url_filter import UrlFilter
 from crawler.user_agent import UserAgent
+from output.csv import CSVWriter
+from output.pickle import PickleWriter
 
 
 def make_logger():
@@ -71,13 +74,13 @@ def main():
         delay=Delay.uniform(*crawl_delay)
     )
 
-    asyncio.run(crawler.crawl())
+    crawl: Crawl = asyncio.run(crawler.crawl())
 
     if args.pickle_path:
-        crawler.save_link_adj(args.pickle_path)
+        PickleWriter(crawl).write(args.pickle_path)
 
     if args.csv_path:
-        crawler.csv_link_adj(args.csv_path)
+        CSVWriter(crawl).write(args.csv_path)
 
 
 if __name__ == '__main__':
