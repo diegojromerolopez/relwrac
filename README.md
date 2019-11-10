@@ -44,6 +44,24 @@ $ python3 src/link_extractor.py \
     -csv reddit_domain.csv
 ```
 
+## Grapher
+
+[grapher.py](/src/grapher.py) is a Python program that reads a
+pickle file and creates a png image with the graph.
+
+### Example
+
+Print graph with reddit links (starting from http://old.reddit.com).
+
+```bash
+$ pwd
+/home/my_user/relcraw
+$ python3 src/grapher.py \
+    -p reddit_domain.pickle \
+    -p reddit_domain.png
+```
+
+
 ## TODO
 
 - Show a graph of the crawled URLs.
