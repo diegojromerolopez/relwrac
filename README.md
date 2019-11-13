@@ -30,7 +30,7 @@ Note there is no depth specified, hence it is 2 (default value).
 
 Results will be saved in two files, a pickle file and a CSV file.
 
-Pickle file will store `Crawler.link_adj` attribute and CSV file
+Pickle file will store `Crawl.links_by_url` attribute and CSV file
 will store a line per crawled URL and a column for each link found
 in that URL.
 
