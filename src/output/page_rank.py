@@ -1,6 +1,7 @@
 from crawler.crawl import Crawl
 import numpy as np
 
+
 # See https://www.cs.ubc.ca/~nando/540b-2011/lectures/book540.pdf
 # for more information about this implementation
 class PageRank(object):
