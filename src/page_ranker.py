@@ -14,7 +14,10 @@ class PageRanker(object):
 
     def __enter__(self):
         self.file = open(self.file_path, 'rb')
-        self.crawl = Crawl(links_by_url=pickle.load(self.file))
+        self.crawl = Crawl()
+        links_by_url = pickle.load(self.file)
+        for url, page_links in links_by_url.items():
+            self.crawl.add_url_links(url, page_links)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):

@@ -9,14 +9,17 @@ class PageRank(object):
         self.size = len(crawl)
 
     def __transition_matrix(self, epsilon=0.0) -> np.array:
-        trans = self.crawl.adjacency_matrix
-        #
-        E = np.ones(trans.shape) / self.size
-        L = trans + epsilon * E
-        m_c_trans_matrix = np.array(np.zeros(L.shape))
+        # Adjacency matrix, i.e T[i][j] is the number of links from URL_i to URL_j
+        T = self.crawl.adjacency_matrix
+        # E[i][j] = 1/size
+        E = np.ones(T.shape) / self.size
+        # L[i][j] = T[i][j] + e*(1/size)
+        L = T + epsilon * E
+        # Normalization
+        G = np.zeros(L.shape)
         for i in range(self.size):
-            m_c_trans_matrix[i, :] = L[i, :] / np.sum(L[i, :])
-        return m_c_trans_matrix
+            G[i, :] = L[i, :] / np.sum(L[i, :])
+        return G
 
     def compute(self, epsilon=0.001, iterations=1000):
         self.G = self.__transition_matrix(epsilon=epsilon)
