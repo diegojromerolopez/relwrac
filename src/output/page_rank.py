@@ -22,13 +22,13 @@ class PageRank(object):
         return G
 
     def compute(self, epsilon=0.001, iterations=1000):
-        self.G = self.__transition_matrix(epsilon=epsilon)
-        self.pi = np.random.rand(self.size)
-        self.pi /= np.sum(self.pi)
-        self.R = self.pi
+        G = self.__transition_matrix(epsilon=epsilon)
+        pi = np.random.rand(self.size)
+        pi /= np.sum(pi)
+        R = pi
         for _ in range(iterations):
-            self.R = np.dot(self.R, self.G)
-        return self.R
+            R = np.dot(R, G)
+        return R
 
     def save_plot(self, file_path: str):
         import matplotlib.pyplot as plt
