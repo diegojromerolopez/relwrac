@@ -7,14 +7,14 @@ from typing import Optional
 
 import validators
 
-from crawler.crawl import Crawl
+from crawler.crawl.crawl import Crawl
 from crawler.crawler import Crawler
 from crawler.delay import Delay
 from crawler.stop_condition import StopCondition
 from crawler.url_filter import UrlFilter
 from crawler.user_agent import UserAgent
-from output.csv import CSVWriter
-from output.pickle import PickleWriter
+from crawler.crawl.output.csv import CSVWriter
+from crawler.crawl.output.pickle import PickleWriter
 
 
 def make_logger():

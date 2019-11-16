@@ -9,7 +9,7 @@ import aiohttp
 import validators
 from bs4 import BeautifulSoup
 
-from crawler.crawl import Crawl
+from crawler.crawl.crawl import Crawl
 from crawler.url_filter import UrlFilter
 
 

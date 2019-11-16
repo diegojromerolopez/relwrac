@@ -1,6 +1,6 @@
 import csv
 
-from output.abstract_writer import AbstractWriter
+from crawler.crawl.output.abstract_writer import AbstractWriter
 
 
 class CSVWriter(AbstractWriter):

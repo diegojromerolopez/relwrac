@@ -1,8 +1,8 @@
 import argparse
 import pickle
 
-from crawler.crawl import Crawl
-from output.graph import Graph
+from crawler.crawl.crawl import Crawl
+from crawler.crawl.output.graph import Graph
 
 
 class Grapher(object):
@@ -13,7 +13,9 @@ class Grapher(object):
 
     def __enter__(self):
         self.file = open(self.file_path, 'rb')
-        self.crawl = Crawl(links_by_url=pickle.load(self.file))
+
+        links_by_url = pickle.load(self.file)
+        self.crawl = Crawl.create_from_links_by_url(links_by_url)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):

@@ -58,7 +58,47 @@ $ pwd
 /home/my_user/relcraw
 $ python3 src/grapher.py \
     -p reddit_domain.pickle \
-    -p reddit_domain.png
+    -o reddit_domain.png
+```
+
+
+## Page rank computer
+
+[grapher.py](/src/grapher.py) reads the link adjacency matrix
+and computes the page rank.
+
+
+### Example
+
+Compute the page rank of the reddit links
+and store the page rank matrix in a reddit_domain-pr.pickle file.
+
+```bash
+$ pwd
+/home/my_user/relcraw
+$ python3 src/page_ranker.py \
+    -p /home/diegoj/proyectos/relwrac/samples/reddit_domain.pickle \
+    -o /home/diegoj/proyectos/relwrac/samples/reddit_domain-pr.pickle
+```
+
+
+
+## Link page rank
+
+[link_page_rank.py](/src/link_page_rank.py) reads page rank and returns
+the value of the page link of the passed as parameter.
+
+
+### Example
+
+Get the page rank of a reddit URL.
+
+```bash
+$ pwd
+/home/my_user/relcraw
+$ python3 src/link_page_rank.py \
+    -u https://old.reddit.com \
+    -pr /home/diegoj/proyectos/relwrac/samples/reddit_domain-pr.pickle
 ```
 
 
@@ -73,3 +113,4 @@ $ python3 src/grapher.py \
 - Store links in database (optionally)
 - Some documentation and examples.
 - Measure performance.
+

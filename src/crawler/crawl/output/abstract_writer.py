@@ -1,4 +1,4 @@
-from crawler.crawl import Crawl
+from crawler.crawl.crawl import Crawl
 
 
 class AbstractWriter(object):
